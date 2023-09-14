@@ -1,0 +1,25 @@
+
+
+============================== 2023-03-29 04:09:36.671112 | 3848585a-37f3-4067-81ee-3981d7716223 ==============================
+[0m04:09:36.671112 [info ] [MainThread]: Running with dbt=1.4.1
+[0m04:09:36.671898 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 80, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': '/Users/douglasebanks/.dbt', 'send_anonymous_usage_stats': False, 'quiet': False, 'no_print': False, 'cache_selected_only': False, 'project_name': 'truecommerce', 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m04:09:36.672012 [debug] [MainThread]: Tracking: do not track
+[0m04:09:36.688085 [debug] [MainThread]: Starter project path: /opt/homebrew/Cellar/dbt-snowflake/1.4.0/libexec/lib/python3.9/site-packages/dbt/include/starter_project
+[0m04:13:19.005635 [info ] [MainThread]: Profile truecommerce written to /Users/douglasebanks/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m04:13:19.009314 [info ] [MainThread]: 
+Your new dbt project "truecommerce" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m04:13:19.010465 [debug] [MainThread]: Flushing usage events

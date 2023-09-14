@@ -1,0 +1,58 @@
+CREATE OR REPLACE PROCEDURE GET_LAST_UPDATED_TIME()
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+    var result = [];
+    var stmt = snowflake.createStatement({
+        sqlText: `
+            SELECT 
+                TABLE_SCHEMA,
+                TABLE_NAME,
+                MAX(LAST_ALTERED) AS LAST_UPDATED
+            FROM 
+                INFORMATION_SCHEMA.TABLE_STORAGE_METRICS
+            WHERE 
+                TABLE_CATALOG = CURRENT_DATABASE()
+            GROUP BY 
+                TABLE_SCHEMA,
+                TABLE_NAME`
+    });
+    var resultSet = stmt.execute();
+
+    while (resultSet.next()) {
+        result.push({
+            SCHEMA_NAME: resultSet.getColumnValue(1),
+            TABLE_NAME: resultSet.getColumnValue(2),
+            LAST_UPDATED: resultSet.getColumnValue(3)
+        });
+    }
+
+    return result;
+$$;
+CREATE TABLE LAST_UPDATED_TABLES (SCHEMA_NAME STRING, TABLE_NAME STRING, LAST_UPDATED TIMESTAMP_TZ);
+CREATE TABLE LAST_UPDATED_TABLES (SCHEMA_NAME STRING, TABLE_NAME STRING, LAST_UPDATED TIMESTAMP_TZ);
+
+INSERT INTO LAST_UPDATED_TABLES (SCHEMA_NAME, TABLE_NAME, LAST_UPDATED)
+SELECT 
+    V:SCHEMA_NAME::STRING,
+    V:TABLE_NAME::STRING,
+    V:LAST_UPDATED::TIMESTAMP_TZ
+FROM 
+    TABLE(FLATTEN(input => (SELECT GET_LAST_UPDATED_TIME())))
+    AS T(V);
+
+CREATE OR REPLACE VIEW LAST_UPDATED_TABLES_VIEW AS
+SELECT 
+    TABLE_SCHEMA AS SCHEMA_NAME,
+    TABLE_NAME,
+    MAX(LAST_ALTERED) AS LAST_UPDATED
+FROM 
+    INFORMATION_SCHEMA.TABLE_STORAGE_METRICS
+WHERE 
+    TABLE_CATALOG = CURRENT_DATABASE()
+GROUP BY 
+    TABLE_SCHEMA,
+    TABLE_NAME;
+
+

@@ -1,0 +1,79 @@
+insert into hanzo.shipment (
+    report_date,
+    latest,
+    index,
+    ship_date,
+    ship_id,
+    ship_state,
+    reference,
+    po_number,
+    bill_contact,
+    carrier,
+    carrier_description,
+    unit_price,
+    hanzo_id,
+    _row_id,
+    _modified,
+    _file,
+    _fivetran_synced
+)
+with shipment_raw as (
+    select *
+    from pc_fivetran_db.s2s_hanzo.shipment
+),
+
+shipment_transformation as (
+    select
+        to_date(left(replace(_file, 'hanzo_inv_report_', ''), '10'), 'yyyy-mm-dd') as report_date,
+        _line as index,
+        shipment_date as ship_date,
+        shipment_ as ship_id,
+        ship_to_state as ship_state,
+        primary_ref_ as reference,
+        primary_ref_po_ as po_number,
+        bill_to_contact as bill_contact,
+        scac as carrier,
+        scac_description as carrier_description,
+        unit_price as unit_price,
+        bol_pro_ as hanzo_id,
+        lower(to_varchar(sha2(_file|| '-' || _line, 256))) as _row_id,
+        _modified as _modified,
+        _file as _file,
+        _fivetran_synced as _fivetran_synced
+    from shipment_raw
+), 
+
+final_shipment as (
+    select
+        *,
+        case
+            when report_date = max(report_date) over () then true
+            else false
+        end as latest
+    from shipment_transformation
+)
+
+select 
+    report_date,
+    latest,
+    index,
+    ship_date,
+    ship_id,
+    ship_state,
+    reference,
+    po_number,
+    bill_contact,
+    carrier,
+    carrier_description,
+    unit_price,
+    hanzo_id,
+    _row_id,
+    _modified,
+    _file,
+    _fivetran_synced
+from final_shipment
+where not exists (
+    select 1
+    from hanzo.shipment s
+    where s._row_id = final_shipment._row_id
+);

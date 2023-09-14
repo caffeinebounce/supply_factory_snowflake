@@ -1,0 +1,1 @@
+CALL sku_ref.update_sku_ref_master();

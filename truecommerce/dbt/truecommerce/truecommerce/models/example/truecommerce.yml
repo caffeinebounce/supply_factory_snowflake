@@ -1,0 +1,58 @@
+version: 2
+
+sources:
+  - name: truecommerce
+    schema: "{{ var('truecommerce_schema', 'truecommerce') }}"
+    database: "{{ var('truecommerce_database', target.database) }}"
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    freshness:
+      warn_after: {count: 48, period: hour}
+      error_after: {count: 72, period: hour}
+
+tables:
+      - name: account
+        identifier: "{{ var('quickbooks_account_identifier', 'account') }}"
+        description: "{{ doc('account_table') }}"  
+        columns:
+          - name: id
+            description: "{{ doc('id') }} account."
+          - name: account_number
+            description: User-defined account number intended to identify the account within the Chart of Accounts.
+          - name: sub_account
+            description: Specifies whether this object represents a parent (false) or a sub_account (true).
+          - name: parent_account_id
+            description: User entered description for the account.
+          - name: name
+            description: User recognizable name for the Account.
+          - name: account_type
+            description: A detailed account classification that specifies the use of this account. The type is based on the Classification.
+          - name: active
+            description: Boolean indicating whether an account is currently active.
+          - name: account_sub_type
+            description: The account sub-type classification and is based on the AccountType value.
+          - name: classification
+            description: The classification of an account. Not supported for non-posting accounts. Valid values include Asset, Equity, Expense, Liability, Revenue.
+          - name: created_at
+            description: "{{ doc('created_at') }} for the account."
+          - name: currency_id
+            description: "{{ doc('currency_id') }} which the account records the balance in."
+
+models:
+  - name: my_first_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: my_second_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null

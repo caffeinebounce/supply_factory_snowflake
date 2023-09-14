@@ -1,0 +1,1 @@
+CALL truecommerce.update_all();

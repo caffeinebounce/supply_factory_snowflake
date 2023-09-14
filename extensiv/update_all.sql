@@ -1,0 +1,1 @@
+call extensiv.update_all();

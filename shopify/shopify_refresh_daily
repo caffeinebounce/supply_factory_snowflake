@@ -1,0 +1,54 @@
+Copy code
+CREATE OR REPLACE PROCEDURE createDailyShopKeyView()
+RETURNS STRING
+LANGUAGE JAVASCRIPT
+AS
+$$
+// Execute the SQL statement to create the view
+const createViewQuery = `
+    CREATE OR REPLACE VIEW daily_shop_key AS (
+        SELECT
+            date_day,
+            shop_id,
+            currency,
+            count_orders AS order_count,
+            quantity_sold AS items_sold,
+            quantity_refunded AS items_refunded,
+            avg_line_item_count AS avg_items_per_order,
+            count_customers AS total_customers,
+            order_adjusted_total AS gross_sales,
+            total_discounts,
+            refund_subtotal,
+            refund_total_tax,
+            shipping_cost,
+            shipping_discount_amount,
+            order_adjustment_amount,
+            order_adjustment_tax_amount,
+            count_discount_codes_applied AS discount_code_applied,
+            count_orders_with_discounts,
+            count_orders_with_refunds,  
+            count_variants_sold AS variants_sold,
+            count_products_sold AS products_sold,
+            quantity_gift_cards_sold,
+            quantity_requiring_shipping,
+            count_abandoned_checkouts,
+            count_customers_abandoned_checkout,
+            count_fulfillment_attempted_delivery,
+            count_fulfillment_delivered,
+            count_fulfillment_failure,
+            count_fulfillment_confirmed
+        FROM prod_sf_tables.shopify.daily_shop
+        WHERE is_deleted = false
+    );
+`;
+
+snowflake.execute({ sqlText: createViewQuery })
+    .then(() => {
+        console.log('View created successfully.');
+        return 'View created successfully.';
+    })
+    .catch((error) => {
+        console.error('Error creating view:', error);
+        return 'Error creating view.';
+    });
+$$;
