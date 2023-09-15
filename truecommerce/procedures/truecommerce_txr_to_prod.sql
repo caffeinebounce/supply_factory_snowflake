@@ -135,11 +135,3 @@ stmt.execute();
     return "no new rows to insert.";
   }
 $$;
-
-
-call truecommerce.update_transaction_register();
-
-update truecommerce.transaction_register
-set latest = false
-where _file = 'TransactionDetailReport (5).csv';
-
