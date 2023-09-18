@@ -168,8 +168,8 @@ $$
         stmt.execute();
 
         // Create or replace the materialized view
-        var create_mview_query = "call public.create_materialized_view('extensiv.transaction_register')";
-        stmt = snowflake.createStatement({ sqlText: create_mview_query });
+        var call_v_create = "call public.create_latest_view('prod_sf_tables.extensiv.transaction_register')";
+        stmt = snowflake.createStatement({ sqlText: call_v_create });
         stmt.execute();
 
         return "updated extensiv.transaction_register (" + new_row_count + ")";

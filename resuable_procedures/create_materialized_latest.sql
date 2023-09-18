@@ -1,25 +1,17 @@
-create or replace procedure public.create_materialized_view(base_table string)
+create or replace procedure public.create_latest_view(base_table string)
 returns string
-language sql
+language javascript
 as
 $$
-    declare
-        sql_command string;
-    begin
-        -- Construct the SQL command dynamically
-        set sql_command = concat(
-            'create or replace materialized view ',
-            base_table,
-            '_mview as select * from ',
-            base_table,
-            ' where latest = true;'
-        );
+    var sql_command = `
+        create or replace view ${BASE_TABLE}_latest as
+        select * from ${BASE_TABLE} where latest = true
+    `;
 
-        -- Execute the SQL command
-        execute immediate sql_command;
-        return 'Materialized view created successfully for ' || base_table_name;
-    exception
-        when others then
-            return 'Failed to create materialized view for ' || base_table_name || ': ' || error_message();
-    end;
+    try {
+        snowflake.execute({sqlText: sql_command});
+        return 'View created successfully for ' + BASE_TABLE;
+    } catch (err) {
+        return 'Failed to create view for ' + BASE_TABLE + ': ' + err.message;
+    }
 $$;
