@@ -12,7 +12,7 @@ $$
         ),
         txr_raw as (
             select *,
-                date as date_col
+                to_varchar(date) as date_col
             from pc_fivetran_db.s2s_extensiv.transaction_register
             where transaction_id is not null
         ), 
@@ -20,14 +20,14 @@ $$
             select
                 transaction_id as id,
                 case 
-                    when date_col REGEXP '\\d{1,2}/\\d{1,2}/\\d{2}$' then 
+                    when date_col regexp '\\\\d{1,2}/\\\\d{1,2}/\\\\d{2}$' then -- changed
                         to_date(concat('20', right(date_col, 2), '-', substring(date_col, 1, 2), '-', substring(date_col, 4, 2)), 'yyyy-mm-dd')
-                    when date_col REGEXP '\\d{1,2}/\\d{1,2}/\\d{4}$' then 
+                    when date_col regexp '\\\\d{1,2}/\\\\d{1,2}/\\\\d{4}$' then -- changed
                         to_date(date_col, 'mm/dd/yyyy')
                     else null
                 end as transaction_date,
                 case
-                    when replace(ship_date, '- CAN', '') regexp '\\d{1,2}/\\d{1,2}/\\d{2}$' then 
+                    when replace(ship_date, '- CAN', '') regexp '\\\\d{1,2}/\\\\d{1,2}/\\\\d{2}$' then -- changed
                         to_date(concat('20', right(replace(ship_date, '- CAN', ''), 2), '-', substring(replace(ship_date, '- CAN', ''), 1, 2), '-', substring(replace(ship_date, '- CAN', ''), 4, 2)), 'yyyy-mm-dd')
                     else 
                         to_date(replace(ship_date, '- CAN', ''), 'mm/dd/yyyy')
@@ -44,8 +44,8 @@ $$
         parse_and_tl as (
             select 
                 p.id,
-                cast(p.transaction_date as date) as transaction_date,
-                cast(p.ship_date as date) as ship_date,
+                p.transaction_date as transaction_date,
+                p.ship_date as ship_date,
                 tl.po_number
             from parse p
             left join tl_aggregated tl on p.id = tl.transaction_id
@@ -92,7 +92,9 @@ $$
             select 1
             from extensiv.transaction_register tr
             where tr._row_id = ft._row_id
-        );
+        )
+        and (transaction_date >= '2020-01-01' and transaction_date is not null)
+        and (ship_date >= '2020-01-01' and ship_date is not null);
     `;
     var stmt = snowflake.createStatement({ sqlText: create_temp_table_query });
     stmt.execute();
