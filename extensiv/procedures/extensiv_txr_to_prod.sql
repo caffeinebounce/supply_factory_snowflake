@@ -167,6 +167,11 @@ $$
         stmt = snowflake.createStatement({ sqlText: insert_new_data_query });
         stmt.execute();
 
+        // Create or replace the materialized view
+        var create_mview_query = "call public.create_materialized_view('extensiv.transaction_register')";
+        stmt = snowflake.createStatement({ sqlText: create_mview_query });
+        stmt.execute();
+
         return "updated extensiv.transaction_register (" + new_row_count + ")";
     } else {
         return "no new rows to insert.";
