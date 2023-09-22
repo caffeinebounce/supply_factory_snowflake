@@ -1,24 +1,5 @@
 create or replace view
-    FIN_TABLES.PROD_QB.ESTIMATES_VIEW (
-        ESTIMATE_ID,
-        QB_ID,
-        TRANSACTION_STATUS,
-        CURRENCY,
-        TOTAL_AMOUNT,
-        SHIP_DATE,
-        TRANSACTION_DATE,
-        CUSTOMER_ID,
-        CUSTOMER,
-        PO_NUMBER,
-        PO_NUMBER_TRIM,
-        STORE_NUMBER,
-        WAREHOUSE,
-        MEMO,
-        BILLING_ADDRESS_ID,
-        SHIPPING_ADDRESS_ID,
-        CREATED_AT,
-        UPDATED_AT
-    ) as
+    FIN_TABLES.PROD_QB.ESTIMATES_VIEW as
 with
     estimates_raw as (
         select
