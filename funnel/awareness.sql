@@ -1,5 +1,5 @@
 create or replace view
-    basic_awareness as
+    awareness.basic_awareness as
 with
     dates as (
         select
