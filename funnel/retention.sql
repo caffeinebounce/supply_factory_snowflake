@@ -1,5 +1,6 @@
 create or replace view
-    basic_retention as
+    basic_retention as;
+
 with
     dates as (
         select
